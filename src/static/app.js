@@ -472,6 +472,69 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function buildActivityShareLink(activityName) {
+    const pageUrl = new URL(window.location.href);
+    pageUrl.searchParams.set("activity", activityName);
+    return pageUrl.toString();
+  }
+
+  function buildSocialShareUrl(platform, activityName) {
+    const shareUrl = buildActivityShareLink(activityName);
+    const shareText = `Check out ${activityName} at Mergington High School!`;
+
+    if (platform === "x") {
+      return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(shareUrl)}`;
+    }
+
+    if (platform === "facebook") {
+      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`;
+    }
+
+    if (platform === "whatsapp") {
+      return `https://wa.me/?text=${encodeURIComponent(
+        `${shareText} ${shareUrl}`
+      )}`;
+    }
+
+    return "#";
+  }
+
+  function createShareButtons(activityName) {
+    const shareButtonsContainer = document.createElement("div");
+    shareButtonsContainer.className = "share-buttons";
+
+    const shareConfigurations = [
+      { platform: "x", className: "share-x", label: "Share on X" },
+      {
+        platform: "facebook",
+        className: "share-facebook",
+        label: "Share on Facebook",
+      },
+      {
+        platform: "whatsapp",
+        className: "share-whatsapp",
+        label: "Share on WhatsApp",
+      },
+    ];
+
+    shareConfigurations.forEach(({ platform, className, label }) => {
+      const shareButton = document.createElement("a");
+      shareButton.className = `share-button ${className}`;
+      shareButton.textContent = label;
+      shareButton.setAttribute("aria-label", `${label} for ${activityName}`);
+      shareButton.href = buildSocialShareUrl(platform, activityName);
+      shareButton.target = "_blank";
+      shareButton.rel = "noopener noreferrer";
+      shareButtonsContainer.appendChild(shareButton);
+    });
+
+    return shareButtonsContainer;
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -585,6 +648,11 @@ document.addEventListener("DOMContentLoaded", () => {
           openRegistrationModal(name);
         });
       }
+    }
+
+    const activityCardActions = activityCard.querySelector(".activity-card-actions");
+    if (activityCardActions) {
+      activityCardActions.appendChild(createShareButtons(name));
     }
 
     activitiesList.appendChild(activityCard);
