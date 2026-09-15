@@ -502,17 +502,37 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function handleShare(event) {
-    const shareButton = event.currentTarget;
-    const activityName = shareButton.dataset.activity;
-    const platform = shareButton.dataset.platform;
+  function createShareButtons(activityName) {
+    const shareButtonsContainer = document.createElement("div");
+    shareButtonsContainer.className = "share-buttons";
 
-    if (!allActivities[activityName]) {
-      showMessage("Unable to share this activity right now.", "error");
-      return;
-    }
+    const shareConfigurations = [
+      { platform: "x", className: "share-x", label: "Share on X" },
+      {
+        platform: "facebook",
+        className: "share-facebook",
+        label: "Share on Facebook",
+      },
+      {
+        platform: "whatsapp",
+        className: "share-whatsapp",
+        label: "Share on WhatsApp",
+      },
+    ];
 
-    openSocialShare(platform, activityName);
+    shareConfigurations.forEach(({ platform, className, label }) => {
+      const shareButton = document.createElement("button");
+      shareButton.type = "button";
+      shareButton.className = `share-button ${className}`;
+      shareButton.textContent = label;
+      shareButton.setAttribute("aria-label", `${label} for ${activityName}`);
+      shareButton.addEventListener("click", () =>
+        openSocialShare(platform, activityName)
+      );
+      shareButtonsContainer.appendChild(shareButton);
+    });
+
+    return shareButtonsContainer;
   }
 
   // Function to render a single activity card
@@ -611,17 +631,6 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
-        <div class="share-buttons">
-          <button type="button" class="share-button share-x" data-platform="x" data-activity="${name}" aria-label="Share ${name} on X">
-            Share on X
-          </button>
-          <button type="button" class="share-button share-facebook" data-platform="facebook" data-activity="${name}" aria-label="Share ${name} on Facebook">
-            Share on Facebook
-          </button>
-          <button type="button" class="share-button share-whatsapp" data-platform="whatsapp" data-activity="${name}" aria-label="Share ${name} on WhatsApp">
-            Share on WhatsApp
-          </button>
-        </div>
       </div>
     `;
 
@@ -641,10 +650,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     }
 
-    const shareButtons = activityCard.querySelectorAll(".share-button");
-    shareButtons.forEach((button) => {
-      button.addEventListener("click", handleShare);
-    });
+    const activityCardActions = activityCard.querySelector(".activity-card-actions");
+    activityCardActions.appendChild(createShareButtons(name));
 
     activitiesList.appendChild(activityCard);
   }
