@@ -27,6 +27,12 @@ def init_database():
             {"$setOnInsert": details},
             upsert=True
         )
+
+        if "difficulty" in details:
+            activities_collection.update_one(
+                {"_id": name, "difficulty": {"$exists": False}},
+                {"$set": {"difficulty": details["difficulty"]}}
+            )
             
     # Initialize teacher accounts if empty
     if teachers_collection.count_documents({}) == 0:
@@ -54,6 +60,7 @@ initial_activities = {
             "start_time": "07:00",
             "end_time": "08:00"
         },
+        "difficulty": "Beginner",
         "max_participants": 20,
         "participants": ["emma@mergington.edu", "sophia@mergington.edu"]
     },
@@ -153,6 +160,7 @@ initial_activities = {
             "start_time": "10:00",
             "end_time": "14:00"
         },
+        "difficulty": "Intermediate",
         "max_participants": 15,
         "participants": ["ethan@mergington.edu", "oliver@mergington.edu"]
     },
@@ -175,6 +183,7 @@ initial_activities = {
             "start_time": "14:00",
             "end_time": "17:00"
         },
+        "difficulty": "Advanced",
         "max_participants": 16,
         "participants": ["william@mergington.edu", "jacob@mergington.edu"]
     }
