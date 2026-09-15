@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       return localStorage.getItem(key);
     } catch (error) {
-      console.error(`Error loading ${key}:`, error);
+      console.error("Browser storage is unavailable.");
       return null;
     }
   }
@@ -70,7 +70,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       localStorage.setItem(key, value);
     } catch (error) {
-      console.error(`Error saving ${key}:`, error);
+      console.error("Browser storage is unavailable.");
     }
   }
 
@@ -78,7 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       localStorage.removeItem(key);
     } catch (error) {
-      console.error(`Error removing ${key}:`, error);
+      console.error("Browser storage is unavailable.");
     }
   }
 
