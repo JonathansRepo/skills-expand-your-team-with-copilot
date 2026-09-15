@@ -21,6 +21,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const userInfo = document.getElementById("user-info");
   const displayName = document.getElementById("display-name");
   const logoutButton = document.getElementById("logout-button");
+  const themeToggle = document.getElementById("theme-toggle");
+  const themeToggleLabel = document.getElementById("theme-toggle-label");
+  const themeIcon = themeToggle?.querySelector(".theme-icon");
   const loginModal = document.getElementById("login-modal");
   const loginForm = document.getElementById("login-form");
   const closeLoginModal = document.querySelector(".close-login-modal");
@@ -46,12 +49,32 @@ document.addEventListener("DOMContentLoaded", () => {
   // Authentication state
   let currentUser = null;
 
+  // Theme state
+  let currentTheme = "light";
+
   // Time range mappings for the dropdown
   const timeRanges = {
     morning: { start: "06:00", end: "08:00" }, // Before school hours
     afternoon: { start: "15:00", end: "18:00" }, // After school hours
     weekend: { days: ["Saturday", "Sunday"] }, // Weekend days
   };
+
+  function readFromStorage(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (error) {
+      console.error("Browser storage is unavailable.");
+      return null;
+    }
+  }
+
+  function writeToStorage(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (error) {
+      console.error("Browser storage is unavailable.");
+    }
+  }
 
   // Initialize filters from active elements
   function initializeFilters() {
@@ -73,6 +96,35 @@ document.addEventListener("DOMContentLoaded", () => {
     if (activeTimeFilter) {
       currentTimeRange = activeTimeFilter.dataset.time;
     }
+  }
+
+  function applyTheme(theme) {
+    currentTheme = theme === "dark" ? "dark" : "light";
+    document.body.dataset.theme = currentTheme;
+    if (!themeToggle || !themeToggleLabel || !themeIcon) {
+      return;
+    }
+    const nextThemeLabel =
+      currentTheme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+    themeToggle.setAttribute(
+      "aria-pressed",
+      currentTheme === "dark" ? "true" : "false"
+    );
+    themeToggle.setAttribute("aria-label", nextThemeLabel);
+    themeToggleLabel.textContent =
+      currentTheme === "dark" ? "Light mode" : "Dark mode";
+    themeIcon.textContent = currentTheme === "dark" ? "☀️" : "🌙";
+  }
+
+  function initializeTheme() {
+    const savedTheme = readFromStorage("themePreference");
+    applyTheme(savedTheme);
+  }
+
+  function toggleTheme() {
+    const nextTheme = currentTheme === "dark" ? "light" : "dark";
+    applyTheme(nextTheme);
+    writeToStorage("themePreference", nextTheme);
   }
 
   // Function to set day filter
@@ -123,7 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Check if user is already logged in (from localStorage)
   function checkAuthentication() {
-    const savedUser = localStorage.getItem("currentUser");
+    const savedUser = readFromStorage("currentUser");
     if (savedUser) {
       try {
         currentUser = JSON.parse(savedUser);
@@ -156,7 +208,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Session is valid, update user data
       const userData = await response.json();
       currentUser = userData;
-      localStorage.setItem("currentUser", JSON.stringify(userData));
+      writeToStorage("currentUser", JSON.stringify(userData));
       updateAuthUI();
     } catch (error) {
       console.error("Error validating session:", error);
@@ -213,7 +265,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Login successful
       currentUser = data;
-      localStorage.setItem("currentUser", JSON.stringify(data));
+      writeToStorage("currentUser", JSON.stringify(data));
       updateAuthUI();
       closeLoginModalHandler();
       showMessage(`Welcome, ${currentUser.display_name}!`, "success");
@@ -228,7 +280,11 @@ document.addEventListener("DOMContentLoaded", () => {
   // Logout function
   function logout() {
     currentUser = null;
-    localStorage.removeItem("currentUser");
+    try {
+      localStorage.removeItem("currentUser");
+    } catch (error) {
+      console.error("Browser storage is unavailable.");
+    }
     updateAuthUI();
     showMessage("You have been logged out.", "info");
   }
@@ -260,6 +316,9 @@ document.addEventListener("DOMContentLoaded", () => {
   // Event listeners for authentication
   loginButton.addEventListener("click", openLoginModal);
   logoutButton.addEventListener("click", logout);
+  if (themeToggle) {
+    themeToggle.addEventListener("click", toggleTheme);
+  }
   closeLoginModal.addEventListener("click", closeLoginModalHandler);
 
   // Close login modal when clicking outside
@@ -968,6 +1027,7 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   // Initialize app
+  initializeTheme();
   checkAuthentication();
   initializeFilters();
   fetchActivities();
