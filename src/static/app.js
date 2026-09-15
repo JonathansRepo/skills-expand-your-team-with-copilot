@@ -478,9 +478,9 @@ document.addEventListener("DOMContentLoaded", () => {
     return pageUrl.toString();
   }
 
-  function openSocialShare(platform, activityName, activityDetails) {
+  function openSocialShare(platform, activityName) {
     const shareUrl = buildActivityShareLink(activityName);
-    const shareText = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    const shareText = `Check out ${activityName} at Mergington High School!`;
     let targetUrl = "";
 
     if (platform === "x") {
@@ -506,14 +506,13 @@ document.addEventListener("DOMContentLoaded", () => {
     const shareButton = event.currentTarget;
     const activityName = shareButton.dataset.activity;
     const platform = shareButton.dataset.platform;
-    const activityDetails = allActivities[activityName];
 
-    if (!activityDetails) {
+    if (!allActivities[activityName]) {
       showMessage("Unable to share this activity right now.", "error");
       return;
     }
 
-    openSocialShare(platform, activityName, activityDetails);
+    openSocialShare(platform, activityName);
   }
 
   // Function to render a single activity card
@@ -613,13 +612,13 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
         <div class="share-buttons">
-          <button class="share-button share-x" data-platform="x" data-activity="${name}">
+          <button class="share-button share-x" data-platform="x" data-activity="${name}" aria-label="Share ${name} on X">
             Share on X
           </button>
-          <button class="share-button share-facebook" data-platform="facebook" data-activity="${name}">
+          <button class="share-button share-facebook" data-platform="facebook" data-activity="${name}" aria-label="Share ${name} on Facebook">
             Share on Facebook
           </button>
-          <button class="share-button share-whatsapp" data-platform="whatsapp" data-activity="${name}">
+          <button class="share-button share-whatsapp" data-platform="whatsapp" data-activity="${name}" aria-label="Share ${name} on WhatsApp">
             Share on WhatsApp
           </button>
         </div>
