@@ -651,7 +651,9 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     const activityCardActions = activityCard.querySelector(".activity-card-actions");
-    activityCardActions.appendChild(createShareButtons(name));
+    if (activityCardActions) {
+      activityCardActions.appendChild(createShareButtons(name));
+    }
 
     activitiesList.appendChild(activityCard);
   }
