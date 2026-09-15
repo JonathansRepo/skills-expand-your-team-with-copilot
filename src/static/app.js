@@ -612,13 +612,13 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         }
         <div class="share-buttons">
-          <button class="share-button share-x" data-platform="x" data-activity="${name}" aria-label="Share ${name} on X">
+          <button type="button" class="share-button share-x" data-platform="x" data-activity="${name}" aria-label="Share ${name} on X">
             Share on X
           </button>
-          <button class="share-button share-facebook" data-platform="facebook" data-activity="${name}" aria-label="Share ${name} on Facebook">
+          <button type="button" class="share-button share-facebook" data-platform="facebook" data-activity="${name}" aria-label="Share ${name} on Facebook">
             Share on Facebook
           </button>
-          <button class="share-button share-whatsapp" data-platform="whatsapp" data-activity="${name}" aria-label="Share ${name} on WhatsApp">
+          <button type="button" class="share-button share-whatsapp" data-platform="whatsapp" data-activity="${name}" aria-label="Share ${name} on WhatsApp">
             Share on WhatsApp
           </button>
         </div>
