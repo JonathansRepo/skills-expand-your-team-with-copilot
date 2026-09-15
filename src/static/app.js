@@ -478,28 +478,29 @@ document.addEventListener("DOMContentLoaded", () => {
     return pageUrl.toString();
   }
 
-  function openSocialShare(platform, activityName) {
+  function buildSocialShareUrl(platform, activityName) {
     const shareUrl = buildActivityShareLink(activityName);
     const shareText = `Check out ${activityName} at Mergington High School!`;
-    let targetUrl = "";
 
     if (platform === "x") {
-      targetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+      return `https://twitter.com/intent/tweet?text=${encodeURIComponent(
         shareText
       )}&url=${encodeURIComponent(shareUrl)}`;
-    } else if (platform === "facebook") {
-      targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+    }
+
+    if (platform === "facebook") {
+      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
         shareUrl
       )}`;
-    } else if (platform === "whatsapp") {
-      targetUrl = `https://wa.me/?text=${encodeURIComponent(
+    }
+
+    if (platform === "whatsapp") {
+      return `https://wa.me/?text=${encodeURIComponent(
         `${shareText} ${shareUrl}`
       )}`;
     }
 
-    if (targetUrl) {
-      window.open(targetUrl, "_blank", "noopener,noreferrer");
-    }
+    return "#";
   }
 
   function createShareButtons(activityName) {
@@ -521,14 +522,13 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     shareConfigurations.forEach(({ platform, className, label }) => {
-      const shareButton = document.createElement("button");
-      shareButton.type = "button";
+      const shareButton = document.createElement("a");
       shareButton.className = `share-button ${className}`;
       shareButton.textContent = label;
       shareButton.setAttribute("aria-label", `${label} for ${activityName}`);
-      shareButton.addEventListener("click", () =>
-        openSocialShare(platform, activityName)
-      );
+      shareButton.href = buildSocialShareUrl(platform, activityName);
+      shareButton.target = "_blank";
+      shareButton.rel = "noopener noreferrer";
       shareButtonsContainer.appendChild(shareButton);
     });
 

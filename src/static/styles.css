@@ -303,6 +303,9 @@ section h3 {
   color: var(--text-primary);
   padding: 5px 8px;
   font-size: 0.72rem;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
 }
 
 .share-button:hover {
