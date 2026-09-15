@@ -187,7 +187,9 @@ section h3 {
   margin-top: auto;
   padding-top: 10px;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
 }
 
 /* Activity Tag */
@@ -271,7 +273,6 @@ section h3 {
 .register-button {
   background: linear-gradient(145deg, var(--secondary), var(--secondary-dark));
   color: var(--secondary-text);
-  margin-top: 10px;
   padding: 6px 12px;
   width: 100%;
   font-weight: bold;
@@ -285,6 +286,39 @@ section h3 {
   letter-spacing: 0.3px;
   text-transform: uppercase;
   border: none;
+}
+
+.share-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.share-button {
+  flex: 1;
+  min-width: 90px;
+  border-radius: 15px;
+  border: 1px solid var(--border);
+  background-color: var(--background);
+  color: var(--text-primary);
+  padding: 5px 8px;
+  font-size: 0.72rem;
+}
+
+.share-button:hover {
+  background-color: var(--border-light);
+}
+
+.share-x {
+  border-color: #b0bec5;
+}
+
+.share-facebook {
+  border-color: #90caf9;
+}
+
+.share-whatsapp {
+  border-color: #a5d6a7;
 }
 
 button {

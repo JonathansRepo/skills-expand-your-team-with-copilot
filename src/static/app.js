@@ -472,6 +472,50 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function buildActivityShareLink(activityName) {
+    const pageUrl = new URL(window.location.href);
+    pageUrl.searchParams.set("activity", activityName);
+    return pageUrl.toString();
+  }
+
+  function openSocialShare(platform, activityName, activityDetails) {
+    const shareUrl = buildActivityShareLink(activityName);
+    const shareText = `Check out ${activityName} at Mergington High School! ${activityDetails.description}`;
+    let targetUrl = "";
+
+    if (platform === "x") {
+      targetUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+        shareText
+      )}&url=${encodeURIComponent(shareUrl)}`;
+    } else if (platform === "facebook") {
+      targetUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+        shareUrl
+      )}`;
+    } else if (platform === "whatsapp") {
+      targetUrl = `https://wa.me/?text=${encodeURIComponent(
+        `${shareText} ${shareUrl}`
+      )}`;
+    }
+
+    if (targetUrl) {
+      window.open(targetUrl, "_blank", "noopener,noreferrer");
+    }
+  }
+
+  function handleShare(event) {
+    const shareButton = event.currentTarget;
+    const activityName = shareButton.dataset.activity;
+    const platform = shareButton.dataset.platform;
+    const activityDetails = allActivities[activityName];
+
+    if (!activityDetails) {
+      showMessage("Unable to share this activity right now.", "error");
+      return;
+    }
+
+    openSocialShare(platform, activityName, activityDetails);
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -568,6 +612,17 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `
         }
+        <div class="share-buttons">
+          <button class="share-button share-x" data-platform="x" data-activity="${name}">
+            Share on X
+          </button>
+          <button class="share-button share-facebook" data-platform="facebook" data-activity="${name}">
+            Share on Facebook
+          </button>
+          <button class="share-button share-whatsapp" data-platform="whatsapp" data-activity="${name}">
+            Share on WhatsApp
+          </button>
+        </div>
       </div>
     `;
 
@@ -586,6 +641,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    const shareButtons = activityCard.querySelectorAll(".share-button");
+    shareButtons.forEach((button) => {
+      button.addEventListener("click", handleShare);
+    });
 
     activitiesList.appendChild(activityCard);
   }
